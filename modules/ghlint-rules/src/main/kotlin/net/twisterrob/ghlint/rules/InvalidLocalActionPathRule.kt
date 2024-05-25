@@ -1,13 +1,12 @@
 package net.twisterrob.ghlint.rules
 
-import net.twisterrob.ghlint.model.Action
-import net.twisterrob.ghlint.model.Step
-import net.twisterrob.ghlint.model.WorkflowStep
+import net.twisterrob.ghlint.model.*
 import net.twisterrob.ghlint.rule.Issue
 import net.twisterrob.ghlint.rule.Reporting
 import net.twisterrob.ghlint.rule.report
 import net.twisterrob.ghlint.rule.visitor.VisitorRule
 import net.twisterrob.ghlint.rule.visitor.WorkflowVisitor
+import java.io.File
 
 public class InvalidLocalActionPathRule : VisitorRule, WorkflowVisitor {
 
@@ -42,6 +41,17 @@ public class InvalidLocalActionPathRule : VisitorRule, WorkflowVisitor {
     }
 
     private fun checkActionExists(usesAction: Step.UsesAction): Boolean {
-        return !usesAction.action.startsWith("./")
+        // TODO: the usesAction should probably model whether this is a remote action or local
+        if (!usesAction.action.startsWith("./")) {
+            return true
+        }
+
+        val location = FileLocation(usesAction.action.removePrefix("./"))
+        return try {
+            val file = File(location.path)
+            file.exists()
+        } catch (e: Exception) {
+            false
+        }
     }
 }

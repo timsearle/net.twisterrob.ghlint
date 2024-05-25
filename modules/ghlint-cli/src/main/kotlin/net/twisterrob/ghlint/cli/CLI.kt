@@ -70,7 +70,7 @@ public class CLI : CliktCommand(
 	override val files: List<Path> by argument()
 		.path(mustExist = true, canBeDir = false)
 		.multiple(required = true)
-		.help("Workflow YML files to check for problems.")
+		.help("Workflow and Action YAML files to check for problems.")
 
 	private val inputs: InputOptions by InputOptions()
 
